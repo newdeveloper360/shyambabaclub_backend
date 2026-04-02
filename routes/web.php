@@ -30,6 +30,8 @@ use App\Http\Controllers\Dashboard\UserController;
 use App\Http\Controllers\Dashboard\WithdrawDetailController;
 use App\Http\Controllers\Dashboard\WithdrawHistoryController;
 use App\Http\Controllers\DesawarChartController;
+use App\Http\Controllers\Dashboard\GroupMemberController;
+use App\Http\Controllers\Dashboard\GroupMemberMessageController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
@@ -193,6 +195,18 @@ Route::middleware(['auth', 'throttle:20,1'])->group(function () {
     Route::middleware('can:app-data')->prefix('payment-getway-setting')->group(function () {
         Route::get('/', [AppDataController::class, 'paymentGetwaySetting'])->name('payment-getway-setting.index');
         Route::post('/', [AppDataController::class, 'paymentGetwaySettingUpdate'])->name('payment-getway-setting.update');
+    });
+
+    // Group Members
+    Route::middleware('can:users')->prefix('group-members')->group(function () {
+        Route::get('/', [GroupMemberController::class, 'index'])->name('group-members.index');
+        Route::post('/toggle-group-member', [GroupMemberController::class, 'toggleGroupMember'])->name('group-members.toggle-group-member');
+    });
+
+    // Group Member Messages
+    Route::middleware('can:users')->prefix('group-member-messages')->group(function () {
+        Route::get('/', [GroupMemberMessageController::class, 'index'])->name('group-member-messages.index');
+        Route::post('/store', [GroupMemberMessageController::class, 'store'])->name('group-member-messages.store');
     });
 
     // Game Types

@@ -59,4 +59,18 @@ class DepositChatController extends Controller
             'unreadMessagesCount' => $unreadMessagesCount
         ]);
     }
+
+    public function readDepositMessages()
+    {
+        /** @var User $user */
+        $user = auth()->user();
+        $depositChats = $user->chats()->depositChat()->first()?->messages()->unreadMessages()->get();  
+        foreach ($depositChats as $depositChat) {
+            $depositChat->update(['is_read' => true]);
+        }
+
+        return response()->success("Read deposit messages successfully.", [
+            'isRead' => true,
+        ]);
+    }
 }

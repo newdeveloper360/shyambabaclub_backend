@@ -26,6 +26,7 @@ class User extends Authenticatable
         'password',
         'own_code',
         'one_signalsubscription_id',
+        'is_group_member',
     ];
 
     protected $hidden = [

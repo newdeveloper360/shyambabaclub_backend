@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use Closure;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
@@ -48,8 +49,16 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
-        $this->reportable(function (Throwable $e) {
-            return "3";
+        // $this->reportable(function (Throwable $e) {
+        //     return "3";
+        // });
+
+        $this->renderable(function (ThrottleRequestsException $e, $request) {
+            return response()->json([
+                'error' => true,
+                'message' => 'Too many requests. Please try again after some time.',
+                'response' => NULL
+            ], 200);
         });
     }
 

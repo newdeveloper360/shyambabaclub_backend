@@ -62,4 +62,18 @@ class WithdrawChatController extends Controller
             'unreadMessagesCount' => $unreadMessagesCount
         ]);
     }
+
+    public function readWithdrawMessages()
+    {
+        /** @var User $user */
+        $user = auth()->user();
+        $withdrawChats = $user->chats()->withdrawChat()->first()?->messages()->unreadMessages()->get();  
+        foreach ($withdrawChats as $withdrawChat) {
+            $withdrawChat->update(['is_read' => true]);
+        }
+
+        return response()->success("Read withdraw messages successfully.", [
+            'isRead' => true,
+        ]);
+    }
 }

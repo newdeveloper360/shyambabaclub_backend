@@ -94,6 +94,18 @@
                             <span>Payment Getway Setting</span>
                         </a>
                     </li>
+                    <li class=" {{ request()->is('group-members**') ? 'active' : '' }} ">
+                        <a href="{{ route('group-members.index') }}" class="nav-link">
+                            <i data-feather="users"></i>
+                            <span>Group Members</span>
+                        </a>
+                    </li>
+                    <li class=" {{ request()->is('group-member-messages**') ? 'active' : '' }} ">
+                        <a href="{{ route('group-member-messages.index') }}" class="nav-link">
+                            <i data-feather="message-square"></i>
+                            <span>Group Member Messages</span>
+                        </a>
+                    </li>
                 @endcan
                 @can('chats-view')
                 <li class=" {{ request()->is('chats*') ? 'active' : '' }} ">

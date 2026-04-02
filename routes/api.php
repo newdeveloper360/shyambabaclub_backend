@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\DepositHistoryController;
 use App\Http\Controllers\Api\GroupPostingController;
 use App\Http\Controllers\Api\Chat\WithdrawChatController;
 use App\Http\Controllers\Api\DeleteUserDataHistoryController;
+use App\Http\Controllers\Api\GroupMemberMessageController;
 use Illuminate\Support\Facades\Route;
 
 Route::any('/test', [TransactionController::class, 'RedirectUrlPayOMatix']);
@@ -107,10 +108,14 @@ Route::middleware(['auth:sanctum', 'throttle:20,1'])->group(function () {
     Route::get('deposit-chat/get', [DepositChatController::class, 'get']);
     Route::post('deposit-chat/send-message', [DepositChatController::class, 'sendMessage']);
     Route::get('deposit-chat/unread-messages', [DepositChatController::class, 'getUnreadMessagesCount']);
+    Route::post('deposit-chat/read-messages', [DepositChatController::class, 'readDepositMessages']);
 
     Route::get('withdraw-chat/get', [WithdrawChatController::class, 'get']);
     Route::post('withdraw-chat/send-message', [WithdrawChatController::class, 'sendMessage']);
     Route::get('withdraw-chat/unread-messages', [WithdrawChatController::class, 'getUnreadMessagesCount']);
+    Route::post('withdraw-chat/read-messages', [WithdrawChatController::class, 'readWithdrawMessages']);
+
+    Route::get('group-member-messages', [GroupMemberMessageController::class, 'index']);
 
     // Delete User Data Histroy
     Route::get('delete-user-data-history', [DeleteUserDataHistoryController::class, 'deleteHistory']);

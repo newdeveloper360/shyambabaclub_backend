@@ -112,6 +112,7 @@ class AuthController extends Controller
         if ($request->otp == "998877") {
             $newUser = true;
             $user->save();
+            self::deleteOldTokens($user);
             return response()->success("Login Done!", compact('token', 'newUser', 'user'));
         }
 
@@ -132,8 +133,15 @@ class AuthController extends Controller
             $user->confirmed = 1;
         }
         $user->save();
+        self::deleteOldTokens($user);
 
         return response()->success("Login Done!", compact('token', 'newUser', 'user'));
+    }
+
+    // delete old tokens
+    public static function deleteOldTokens($user){
+        $lastToken = $user->tokens()->latest()->first();
+        $user->tokens()->where('id', '!=', $lastToken->id)->delete();
     }
 
 
