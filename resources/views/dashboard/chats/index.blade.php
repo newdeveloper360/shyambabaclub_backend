@@ -9,6 +9,17 @@
             <div class="main-content">
                 <section class="section">
                     <div class="section-body">
+                        <div class="card">
+                            <div class="card-header">
+                                <form action="{{ route('chats.index') }}" method="GET" class="form-inline mr-auto">
+                                    <div class="search-element">
+                                        <input name="searchValue" id="myInput" class="form-control" @if (isset($searchValue)) value="{{ $searchValue }}" @endif type="search" placeholder="Search" aria-label="Search" data-width="200">
+                                        <button class="btn" type="submit"><i class="fas fa-search"></i></button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
                         <div class="row">
                             <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
                                 <div class="card">
@@ -65,20 +76,117 @@
                                         <div class="card-body chat-content">
                                         </div>
                                         @can('chats-send-message')
-                                        <div class="card-footer chat-form">
+                                        <div class="card-footer chat-composer-footer">
+                                            <style>
+                                                .chat-composer-footer {
+                                                    position: static !important;
+                                                    padding: 0.75rem 1.25rem 1rem;
+                                                }
+
+                                                #chat-form {
+                                                    display: flex;
+                                                    flex-direction: column;
+                                                    gap: 0.75rem;
+                                                    margin: 0;
+                                                    width: 100%;
+                                                }
+
+                                                #chat-form .composer-main {
+                                                    display: flex;
+                                                    flex-wrap: nowrap;
+                                                    align-items: center;
+                                                    justify-content: space-between;
+                                                    gap: 0.5rem;
+                                                    width: 100%;
+                                                }
+
+                                                #chat-form #chat-message-input {
+                                                    flex: 1 1 auto;
+                                                    min-width: 0;
+                                                    position: static !important;
+                                                    margin: 0 !important;
+                                                }
+
+                                                #chat-form .composer-actions {
+                                                    display: flex;
+                                                    flex-wrap: nowrap;
+                                                    align-items: center;
+                                                    justify-content: flex-start;
+                                                    align-self: center;
+                                                    gap: 0.5rem;
+                                                    flex: 0 0 auto;
+                                                    margin-top: 0 !important;
+                                                }
+
+                                                #chat-form .composer-actions,
+                                                #chat-form .composer-actions * {
+                                                    top: auto !important;
+                                                    right: auto !important;
+                                                    bottom: auto !important;
+                                                    left: auto !important;
+                                                    transform: none !important;
+                                                    float: none !important;
+                                                }
+
+                                                #chat-form .composer-actions .btn,
+                                                #chat-form .composer-actions .btn.btn-primary,
+                                                #chat-form .composer-actions label.btn {
+                                                    position: static !important;
+                                                    margin: 0 !important;
+                                                    display: inline-flex;
+                                                    align-items: center;
+                                                    justify-content: center;
+                                                    min-width: 42px;
+                                                    height: 42px;
+                                                    padding: 0 0.85rem;
+                                                }
+
+                                                #chat-form #send-message-btn {
+                                                    min-width: 48px;
+                                                }
+
+                                                @media (max-width: 767.98px) {
+                                                    #chat-form .composer-main {
+                                                        flex-wrap: wrap;
+                                                    }
+
+                                                    #chat-form .composer-actions {
+                                                        width: 100%;
+                                                    }
+                                                }
+                                            </style>
                                             <form id="chat-form">
-                                                <input type="text" class="form-control" placeholder="Type a message">
-                                                <div class="col-5 d-flex">
-                                                    <input type="file" class="form-control-file pl-1">
-                                                    <button type="button" class="btn btn-danger ml-5 d-none"
-                                                        id="cancel-upload">
-                                                        <i class="fas fa-trash-alt"></i>
-                                                    </button>
+                                                <div class="composer-main">
+                                                    <input type="text" class="form-control flex-fill"
+                                                        id="chat-message-input" placeholder="Type a message">
+                                                    <div class="composer-actions">
+                                                        <label for="chat-file-input"
+                                                            class="btn btn-light border"
+                                                            title="Attach file">
+                                                            <i class="fas fa-paperclip"></i>
+                                                        </label>
+                                                        <input type="file" id="chat-file-input" class="d-none"
+                                                            accept="image/*,audio/*,video/*,application/pdf">
+                                                        <button type="button" class="btn btn-light border"
+                                                            id="start-recording" title="Record audio">
+                                                            <i class="fas fa-microphone"></i>
+                                                        </button>
+                                                        <button type="button" class="btn btn-warning d-none"
+                                                            id="stop-recording" title="Stop recording">
+                                                            <i class="fas fa-stop"></i>
+                                                        </button>
+                                                        <button type="button" class="btn btn-danger d-none"
+                                                            id="cancel-upload" title="Remove attachment">
+                                                            <i class="fas fa-trash-alt"></i>
+                                                        </button>
+                                                        <button class="btn btn-primary" id="send-message-btn">
+                                                            <i class="far fa-paper-plane"></i>
+                                                        </button>
+                                                    </div>
                                                 </div>
-                                                <button class="btn btn-primary">
-                                                    <i class="far fa-paper-plane"></i>
-                                                </button>
-                                                <span class="text-danger px-2 py-5" id="msg-error"></span>
+                                                <small class="text-muted d-none mt-2 d-block" id="attachment-status"></small>
+                                                <audio class="w-100 mt-2 d-none" id="recording-preview" controls></audio>
+                                                <span class="text-danger d-block mt-2" id="msg-error"></span>
                                             </form>
                                         </div>
                                         @endcan

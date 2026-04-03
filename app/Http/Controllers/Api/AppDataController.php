@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\AppData;
+use App\Models\GroupMemberMessage;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -52,7 +53,10 @@ class AppDataController extends Controller
                 return response()->success($message, $data);
             }
             $withdrawDetails = $user->withdrawDetails;
-            $data = compact('appData', 'user');
+
+            $newGroupMessageId = GroupMemberMessage::latest()->first()->id ?? 0;
+            
+            $data = compact('appData', 'user', 'newGroupMessageId');
             return response()->success($message, $data);
         }
         $data = compact('appData');

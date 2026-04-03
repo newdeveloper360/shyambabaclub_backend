@@ -12,10 +12,19 @@ use Illuminate\Http\Request;
 
 class ChatController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $chats = Chat::with('user')->latest('updated_at')->get();
-        return view("dashboard.chats.index", compact('chats'));
+        $query = Chat::with('user');
+        $searchValue = '';
+        if($request->has('searchValue')) {
+            $searchValue = $request->searchValue;
+            $query->whereHas('user', function($query) use ($searchValue){
+                $query->where('name', 'LIKE', '%' . $searchValue . '%')
+                    ->orWhere('phone', 'LIKE', '%' . $searchValue . '%');
+            });
+        }
+        $chats = $query->latest('updated_at')->paginate(25);
+        return view("dashboard.chats.index", compact('chats', 'searchValue'));
     }
 
     public function getChat(Chat $chat)
@@ -72,9 +81,14 @@ class ChatController extends Controller
             // Save the file and update the message
             $extension = $file->getClientOriginalExtension();
             $media = $message->addMedia($file)->toMediaCollection('msg-media');
+
+            // Generate correct URL with /storage/app/public/ path
+            $fileUrl = env('APP_URL') . '/storage/app/public/' . $media->id . '/' . $media->file_name;
+            
             $message->update([
                 'type' => $type,
-                'file_url' => $media->getUrl(),
+                // 'file_url' => $media->getUrl(),
+                'file_url' => $fileUrl,
                 'file_type' => $extension,
             ]);
         }

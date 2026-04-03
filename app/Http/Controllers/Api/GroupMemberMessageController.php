@@ -11,6 +11,7 @@ class GroupMemberMessageController extends Controller
     public function index()
     {
         $data = GroupMemberMessage::latest()->get();
-        return response()->success("Group member messages fetched successfully", compact('data'));
+        $lastSeenGroupMessageId = GroupMemberMessage::latest()->first()->id ?? 0;
+        return response()->success("Group member messages fetched successfully", compact('data', 'lastSeenGroupMessageId'));
     }
 }

@@ -50,9 +50,14 @@ class ChatService
             // Save the file and update the message
             $extension = $file->getClientOriginalExtension();
             $media = $message->addMedia($file)->toMediaCollection('msg-media');
+
+            // Generate correct URL with /storage/app/public/ path
+            $fileUrl = env('APP_URL') . '/storage/app/public/' . $media->id . '/' . $media->file_name;
+            
             $message->update([
                 'type' => $type,
-                'file_url' => $media->getUrl(),
+                // 'file_url' => $media->getUrl(),
+                'file_url' => $fileUrl,
                 'file_type' => $extension,
             ]);
         }

@@ -28,23 +28,178 @@
             bindClickEvent()
         });
 
-        // Handle file input change
-        $('input[type="file"]').on('change', function() {
-            var fileName = $(this).val().split('\\').pop(); // Get file name
-            var messageInput = $(this).closest('form').find('input[type="text"]');
-            $("#cancel-upload").removeClass('d-none')
-            messageInput.val(fileName); // Update message input with file name
-            messageInput.prop('disabled', true); // Disable message input
+        const chatForm = $("#chat-form");
+        const messageInput = $("#chat-message-input");
+        const fileInput = $("#chat-file-input");
+        const cancelUploadButton = $("#cancel-upload");
+        const startRecordingButton = $("#start-recording");
+        const stopRecordingButton = $("#stop-recording");
+        const attachmentStatus = $("#attachment-status");
+        const recordingPreview = $("#recording-preview");
+        const sendMessageButton = $("#send-message-btn");
+
+        let mediaRecorder = null;
+        let recordingStream = null;
+        let recordingChunks = [];
+        let recordedFile = null;
+        let discardRecording = false;
+
+        function getSupportedAudioMimeType() {
+            const mimeTypes = [
+                'audio/webm;codecs=opus',
+                'audio/webm',
+                'audio/ogg;codecs=opus',
+                'audio/ogg',
+                'audio/mp4',
+            ];
+
+            for (let i = 0; i < mimeTypes.length; i++) {
+                if (MediaRecorder.isTypeSupported(mimeTypes[i])) {
+                    return mimeTypes[i];
+                }
+            }
+
+            return '';
+        }
+
+        function stopRecordingStream() {
+            if (recordingStream) {
+                recordingStream.getTracks().forEach(function(track) {
+                    track.stop();
+                });
+                recordingStream = null;
+            }
+        }
+
+        function clearRecordingPreview() {
+            const previewUrl = recordingPreview.data('preview-url');
+            if (previewUrl) {
+                URL.revokeObjectURL(previewUrl);
+            }
+            recordingPreview.removeData('preview-url');
+            recordingPreview.attr('src', '').addClass('d-none');
+        }
+
+        function setAttachmentStatus(text) {
+            attachmentStatus.text(text).removeClass('d-none');
+        }
+
+        function clearAttachmentState() {
+            fileInput.val('');
+            recordedFile = null;
+            clearRecordingPreview();
+            attachmentStatus.text('').addClass('d-none');
+            cancelUploadButton.addClass('d-none');
+            $("#msg-error").text("");
+
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                discardRecording = true;
+                mediaRecorder.stop();
+            } else {
+                stopRecordingStream();
+                startRecordingButton.removeClass('d-none');
+                stopRecordingButton.addClass('d-none');
+                fileInput.prop('disabled', false);
+            }
+        }
+
+        fileInput.on('change', function() {
+            const selectedFile = this.files[0];
+            recordedFile = null;
+            clearRecordingPreview();
+
+            if (!selectedFile) {
+                attachmentStatus.text('').addClass('d-none');
+                cancelUploadButton.addClass('d-none');
+                return;
+            }
+
+            setAttachmentStatus(`Attached file: ${selectedFile.name}`);
+            cancelUploadButton.removeClass('d-none');
         });
 
-        // Handle cancel upload button
-        $('#cancel-upload').on('click', function() {
-            var fileInput = $(this).siblings('input[type="file"]');
-            var messageInput = $(this).closest('form').find('input[type="text"]');
-            fileInput.val(''); // Clear file input
-            messageInput.val(''); // Clear message input
-            messageInput.prop('disabled', false); // Enable message input
-            $("#cancel-upload").addClass('d-none')
+        cancelUploadButton.on('click', function() {
+            clearAttachmentState();
+        });
+
+        startRecordingButton.on('click', async function() {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) {
+                $("#msg-error").text("Audio recording is not supported in this browser.");
+                return;
+            }
+
+            clearAttachmentState();
+            $("#msg-error").text("");
+
+            try {
+                recordingStream = await navigator.mediaDevices.getUserMedia({
+                    audio: true
+                });
+                recordingChunks = [];
+                discardRecording = false;
+                const mimeType = getSupportedAudioMimeType();
+                mediaRecorder = mimeType ? new MediaRecorder(recordingStream, {
+                    mimeType: mimeType
+                }) : new MediaRecorder(recordingStream);
+
+                mediaRecorder.ondataavailable = function(event) {
+                    if (event.data.size > 0) {
+                        recordingChunks.push(event.data);
+                    }
+                };
+
+                mediaRecorder.onstop = function() {
+                    const shouldDiscard = discardRecording;
+                    discardRecording = false;
+                    stopRecordingStream();
+                    startRecordingButton.removeClass('d-none');
+                    stopRecordingButton.addClass('d-none');
+                    fileInput.prop('disabled', false);
+
+                    if (shouldDiscard || recordingChunks.length === 0) {
+                        recordedFile = null;
+                        attachmentStatus.text('').addClass('d-none');
+                        cancelUploadButton.addClass('d-none');
+                        clearRecordingPreview();
+                        return;
+                    }
+
+                    const recordedMimeType = mediaRecorder.mimeType || mimeType || 'audio/webm';
+                    const extension = recordedMimeType.indexOf('ogg') !== -1 ? 'ogg' : recordedMimeType
+                        .indexOf('wav') !== -1 ? 'wav' : recordedMimeType.indexOf('mp4') !== -1 ?
+                        'mp4' : 'webm';
+                    const audioBlob = new Blob(recordingChunks, {
+                        type: recordedMimeType
+                    });
+                    const previewUrl = URL.createObjectURL(audioBlob);
+
+                    recordedFile = new File([audioBlob], `recording-${Date.now()}.${extension}`, {
+                        type: recordedMimeType
+                    });
+
+                    recordingPreview.attr('src', previewUrl).data('preview-url', previewUrl).removeClass(
+                        'd-none');
+                    setAttachmentStatus(`Recorded audio ready: ${recordedFile.name}`);
+                    cancelUploadButton.removeClass('d-none');
+                };
+
+                fileInput.val('');
+                fileInput.prop('disabled', true);
+                cancelUploadButton.removeClass('d-none');
+                setAttachmentStatus('Recording audio...');
+                startRecordingButton.addClass('d-none');
+                stopRecordingButton.removeClass('d-none');
+                mediaRecorder.start();
+            } catch (error) {
+                stopRecordingStream();
+                $("#msg-error").text("Microphone permission is required to record audio.");
+            }
+        });
+
+        stopRecordingButton.on('click', function() {
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                mediaRecorder.stop();
+            }
         });
 
         var chatIds = $('#divOfChatIdsData').data('chat-ids');
@@ -173,7 +328,7 @@
                 element += "<div><a class='chat-text' href='" + chat.file_url +
                     "' target='_blank'>" + filename + "</a></div>";
             } else if (chat.type === 'audio') {
-                element += "<audio controls><source src='" + chat.file_url + "' type='audio/mp3'></audio>";
+                element += "<audio controls src='" + chat.file_url + "'></audio>";
             } else if (chat.type === 'video') {
                 element += "<video width='320' height='240' controls><source src='" + chat.file_url +
                     "' type='video/mp4'></video>";
@@ -198,11 +353,12 @@
         }
 
         // start message submit
-        $("#chat-form").submit(function(event) {
+        chatForm.submit(function(event) {
             event.preventDefault();
             $('.chats.clearfix.active').prependTo($('.chats.clearfix').parent());
-            var formInputText = $(this).find('input[type="text"]');
-            var formFileInput = $(this).find('input[type="file"]')[0].files[0];
+            var formInputText = messageInput;
+            var formFileInput = recordedFile || fileInput[0].files[0];
+
             if (formInputText.val().trim().length == 0 && !formFileInput) {
                 $("#msg-error").text("Message or file is required.");
                 return;
@@ -216,8 +372,6 @@
             let message = formInputText.val();
             let file = formFileInput;
             sendMessage(currentChatId, message, file);
-            formInputText.val('');
-            $(this).get(0).reset(); // Reset the form, including the file input
         });
 
         function sendMessage(chatId, message, file) {
@@ -230,6 +384,7 @@
                 formData.append('file', file);
             }
 
+            sendMessageButton.prop('disabled', true);
             $.ajax({
                 type: "POST",
                 url: `/chats/send-message/${chatId}`,
@@ -246,9 +401,15 @@
                         type: message.type,
                         file_url: message.file_url,
                     });
+                    messageInput.val('');
+                    clearAttachmentState();
                 },
                 error: function(xhr, status, error) {
                     console.error(xhr.responseText);
+                    $("#msg-error").text("Unable to send the message right now.");
+                },
+                complete: function() {
+                    sendMessageButton.prop('disabled', false);
                 }
             });
         }
