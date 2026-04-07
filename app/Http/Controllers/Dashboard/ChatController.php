@@ -7,14 +7,19 @@ use App\Http\Controllers\Controller;
 use App\Models\Chat;
 use App\Models\User;
 use App\Notifications\ChatNotification;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class ChatController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Chat::with('user');
+        $query = Chat::with('user')
+            ->withMax([
+                'messages as latest_user_message_at' => function ($query) {
+                    $query->where('is_read', false);
+                    $query->latest();
+                }
+            ], 'id');
         $searchValue = '';
         if($request->has('searchValue')) {
             $searchValue = $request->searchValue;
@@ -23,7 +28,11 @@ class ChatController extends Controller
                     ->orWhere('phone', 'LIKE', '%' . $searchValue . '%');
             });
         }
-        $chats = $query->latest('updated_at')->paginate(25);
+        $chats = $query
+            ->orderByDesc('latest_user_message_at')
+            ->latest('updated_at')
+            ->paginate(25);
+
         return view("dashboard.chats.index", compact('chats', 'searchValue'));
     }
 
