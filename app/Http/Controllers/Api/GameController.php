@@ -88,7 +88,7 @@ class GameController extends Controller
                     }
                 }
             ],
-            'games.*.amount' => ['required', 'numeric'],
+            'games.*.amount' => ['required', 'numeric', 'min:1'],
             'games.*.session' => ["required", Rule::in(['open', 'close', 'null'])],
             'games.*.game_type_id' => 'required|exists:game_types,id',
         ]);
