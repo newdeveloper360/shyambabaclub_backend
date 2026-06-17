@@ -31,7 +31,7 @@ class ChatController extends Controller
         $chats = $query
             ->orderByDesc('latest_user_message_at')
             ->latest('updated_at')
-            ->paginate(25);
+            ->paginate(100);
 
         return view("dashboard.chats.index", compact('chats', 'searchValue'));
     }
