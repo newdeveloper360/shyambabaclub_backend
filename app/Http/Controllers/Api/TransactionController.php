@@ -9,6 +9,7 @@ use App\Models\DesawarRecord;
 use App\Models\Transaction;
 use App\Models\UpiTransaction;
 use App\Models\User;
+use App\Models\WithdrawHistory;
 use Carbon\Carbon;
 use Exception;
 use GuzzleHttp\Exception\RequestException;
@@ -93,11 +94,52 @@ class TransactionController extends Controller
         }
     }
 
-    //
+    // Submit Payout Callback for RudraxPay
     public function SubmitPayoutRudraxPay(Request $request)
     {
         Log::info('SubmitPayoutRudraxPay');
         Log::info($request->all());
+
+        $status = $request->status ?? null;
+        $transactionId = $request->client_txn_id ?? null;
+        $utr = $request->utr ?? null;
+        $amount = $request->amount ?? null;
+
+        if ($transactionId === null) {
+            return 'Transaction ID is required';
+        }
+
+        $withdraw = WithdrawHistory::with('user')->where('transaction_id', $transactionId)->where('status', 'initiated')->first();
+        if ($withdraw === NULL) {
+            Log::info('Withdrawal request not found'.$transactionId);
+            return 'Withdrawal request not found';
+        }
+
+        if ($status == 'success') {
+            $withdraw->status = 'success';
+            $withdraw->save();
+            return 'Withdrawal successful';
+        } 
+
+        if ($status == 'refund') {
+            $withdraw->status = 'failed';
+            $withdraw->save();
+
+            $user = $withdraw->user;
+            $user->balance = $user->balance + $withdraw->amount;
+            $user->update();
+            $user->transactions()->create([
+                'previous_amount' => $user->balance - $withdraw->amount,
+                'amount' => $withdraw->amount,
+                'current_amount' => $user->balance,
+                'type' => 'withdraw',
+                'details' => 'Withdraw ($withdraw->amount) Refunded via RudraxPay',
+            ]);
+            
+            return 'Withdrawal refunded successfully';
+        }
+
+        return 'Withdrawal request not found';
     }
 
     //SUBMIT PAYMENT CALLBACKS START

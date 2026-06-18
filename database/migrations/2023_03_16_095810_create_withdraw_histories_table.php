@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('transaction_id');
             $table->enum('request_type', ['debit'])->default('debit');
             $table->enum('withdraw_mode', ['upi', 'bank', 'gpay', 'paytm', 'phonepe'])->default('upi');
-            $table->enum('status', ['pending', 'success', 'failed'])->default('pending');
+            $table->enum('status', ['pending', 'success', 'failed', 'initiated'])->default('pending');
             $table->timestamps();
         });
     }

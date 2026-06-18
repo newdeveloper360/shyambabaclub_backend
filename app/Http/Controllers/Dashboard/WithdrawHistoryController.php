@@ -705,15 +705,15 @@ class WithdrawHistoryController extends Controller
         Log::info('acceptRequestRudraxPay');
 
         // Fetch withdrawal request and user details
-        $withdraw = WithdrawHistory::where('id', $id)
-            ->with('user', 'user.withdrawDetails')
-            ->first();
+        $withdraw = WithdrawHistory::where('id', $id)->with('user', 'user.withdrawDetails')->first();
 
         if (!$withdraw) {
             return "Withdrawal request not found.";
         }
 
         $user = $withdraw->user;
+        $withdraw->transaction_id = Str::random(12);
+        $withdraw->save();
 
         // Prepare API endpoint and request data
         $client = new Client();
@@ -726,8 +726,10 @@ class WithdrawHistoryController extends Controller
             'name' => $user->withdrawDetails->account_holder_name,
             'number' => $user->withdrawDetails->account_number,
             'ifsc' => $user->withdrawDetails->account_ifsc_code,
-            'orderid' => Str::random(12), // Unique order ID
+            'orderid' => $withdraw->transaction_id, // Unique order ID
         ];
+
+        Log::info('payload data for RudraxPay: '. json_encode($data));
 
         try {
             // Send POST request
@@ -742,15 +744,15 @@ class WithdrawHistoryController extends Controller
             Log::info($parsedResponse);
 
             if (isset($parsedResponse['status']) && $parsedResponse['status'] === true) {
-                // Mark withdrawal as success
-                $withdraw->status = "success";
+                // Mark withdrawal as initiated
+                $withdraw->status = "initiated";
                 $withdraw->save();
 
                 // Update user transaction history
                 $user->transactions()->create([
-                    'previous_amount' => $user->balance,
+                    'previous_amount' => $user->balance + $withdraw->amount,
                     'amount' => $withdraw->amount,
-                    'current_amount' => $user->balance - $withdraw->amount,
+                    'current_amount' => $user->balance,
                     "type" => "withdraw",
                     "details" => "Withdraw ($withdraw->amount) Accepted via RudraxPay",
                 ]);
