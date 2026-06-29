@@ -101,7 +101,7 @@ class TransactionController extends Controller
         Log::info($request->all());
 
         $status = $request->status ?? null;
-        $transactionId = $request->client_txn_id ?? null;
+        $transactionId = $request->transaction_id ?? null;
         $utr = $request->utr ?? null;
         $amount = $request->amount ?? null;
 
