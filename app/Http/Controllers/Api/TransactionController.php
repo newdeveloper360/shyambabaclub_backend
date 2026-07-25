@@ -636,7 +636,8 @@ class TransactionController extends Controller
             "Content-Type" => "application/json",
         ])
             ->withToken($appData->payfromupi_api_key)
-            ->timeout(60)
+            ->connectTimeout(5)
+            ->timeout(15)
             ->post("https://payfromupi.com/api/transactions/create", $fields);
         $response = $http_request->json();
 
@@ -1126,7 +1127,9 @@ class TransactionController extends Controller
         try {
             $http_request = Http::withHeaders([
                 "Content-Type" => "application/json",
-            ])->timeout(60)
+            ])
+            ->connectTimeout(5)
+            ->timeout(15)
                 ->get("https://indiaonlinepay.com/api/iopregisterupiintent", $fields);
             $response = $http_request->json();
 
@@ -1167,7 +1170,9 @@ class TransactionController extends Controller
         try {
             $http_request = Http::withHeaders([
                 "Content-Type" => "application/json",
-            ])->timeout(60)
+            ])
+            ->connectTimeout(5)
+            ->timeout(15)
                 ->get("https://upimoney.co.in/api/payin/transaction", $fields);
             $response = $http_request->json();
 
@@ -1244,7 +1249,9 @@ class TransactionController extends Controller
         try {
             $http_request = Http::withHeaders([
                 "Content-Type" => "application/json",
-            ])->timeout(60)
+            ])
+            ->connectTimeout(5)
+            ->timeout(15)
                 ->post("https://ibrpay.com/api/UPICollection.aspx", $fields);
             $response = $http_request->json();
 
@@ -1328,7 +1335,9 @@ class TransactionController extends Controller
         try {
             $http_request = Http::withHeaders([
                 "Content-Type" => "application/json",
-            ])->timeout(60)
+            ])
+            ->connectTimeout(5)
+            ->timeout(15)
                 ->post("https://ibrpay.com/api/upiintent.aspx", $fields);
             $response = $http_request->json();
 
