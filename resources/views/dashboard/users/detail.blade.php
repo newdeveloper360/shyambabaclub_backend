@@ -312,7 +312,10 @@
                                                                 <thead>
                                                                     <tr>
                                                                         <th>S.No</th>
-                                                                        <th>Points</th>
+                                                                        <th>Previous amount</th>
+                                                                        <th>Transaction amount</th>
+                                                                        <th>Current amount</th>
+                                                                        <th>Type</th>
                                                                         <th>Transaction Note</th>
                                                                         <th>Date</th>
                                                                     </tr>
@@ -322,7 +325,10 @@
                                                                         @foreach ($transactionHistory as $history)
                                                                             <tr>
                                                                                 <td>{{ $history->id }}</td>
-                                                                                <td>{{ $history->amount }}</td>
+                                                                                <td>{{ number_format($history->previous_amount) }}</td>
+                                                                                <td>{{ number_format($history->amount) }}</td>
+                                                                                <td>{{ number_format($history->current_amount) }}</td>
+                                                                                <td>{{ $history->type }}</td>
                                                                                 <td>{{ $history->details }}</td>
                                                                                 <td>{{ $history->created_at }}</td>
                                                                             </tr>

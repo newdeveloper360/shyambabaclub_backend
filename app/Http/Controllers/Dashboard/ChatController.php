@@ -16,6 +16,7 @@ class ChatController extends Controller
         $query = Chat::with('user')
             ->withMax([
                 'messages as latest_user_message_at' => function ($query) {
+                    $query->whereNot('user_id', auth()->id());
                     $query->where('is_read', false);
                     $query->latest();
                 }

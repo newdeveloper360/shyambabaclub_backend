@@ -71,7 +71,7 @@ class UserController extends Controller
             $withdraw_request_reject = 1;
         }
 
-        $transactionHistory = Transaction::where(['user_id' => $id])->latest()->limit(10)->get();
+        $transactionHistory = Transaction::where(['user_id' => $id])->orderBy('id', 'desc')->limit(10)->get();
         $creditHistory = Transaction::where(['user_id' => $id, 'type' => 'recharge'])->latest()->limit(10)->get();
         $debitHistory = Transaction::where(['user_id' => $id, 'type' => 'withdraw'])->latest()->limit(10)->get();
         $userTransaction['totalRecharge'] = Transaction::where(['user_id' => $id, 'type' => 'recharge'])->sum('amount');
@@ -96,7 +96,7 @@ class UserController extends Controller
             $withdraw_request_reject = 1;
         }
 
-        $transactionHistory = Transaction::where(['user_id' => $id])->latest()->get();
+        $transactionHistory = Transaction::where(['user_id' => $id])->orderBy('id', 'desc')->get();
         $creditHistory = Transaction::where(['user_id' => $id, 'type' => 'recharge'])->latest()->get();
         $debitHistory = Transaction::where(['user_id' => $id, 'type' => 'withdraw'])->latest()->get();
 

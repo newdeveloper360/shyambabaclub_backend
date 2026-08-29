@@ -100,6 +100,7 @@ Route::middleware(['auth:sanctum', 'throttle:20,1'])->group(function () {
     Route::get('/get-bonus-report', [TransactionController::class, 'getBonusReport']);
     Route::post('/get-deposit-history', [DepositHistoryController::class, 'getDepositHistory']);
     Route::post('/get-withdrawl-history', [WithdrawHistoryController::class, 'getWithdrawlHistory']);
+    Route::post('/get-transaction-history', [TransactionController::class, 'getTransactionHistory']);
 
     // Chats
     Route::get('group-posting/get', [GroupPostingController::class, 'get']);

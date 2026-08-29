@@ -1471,6 +1471,22 @@ class TransactionController extends Controller
         return response()->success("Data Sent!", compact('transactions'));
     }
 
+    //transaction history api: paginated transactions for logged in user, along with the user's data
+    public function getTransactionHistory(Request $request)
+    {
+        $request->validate([
+            'page' => 'required|numeric',
+        ]);
+        /** @var User $user */
+        $user = Auth::user();
+
+        $transactions = Transaction::where('user_id', $user->id)
+            ->orderBy('id', 'desc')
+            ->paginate(50, ['*'], 'transaction_history', $request->page);
+
+        return response()->success("Data Sent!", compact('transactions', 'user'));
+    }
+
     //bonus report api: total play amount, total commision as 0, remaining commision as 0, & date wise total played amount as well as commision (0)
     public function getBonusReport(Request $request)
     {
