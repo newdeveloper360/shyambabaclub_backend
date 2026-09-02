@@ -23,7 +23,7 @@ class DesawarRecordChartService
 
     protected static function getJodiData()
     {
-        $query = DesawarRecord::select(
+        $query = DesawarRecord::whereNot('status', 'canceled')->select(
             'number',
             DB::raw('SUM(amount) as total_amount')
         )->whereRaw('LENGTH(number) <= 2'); // Ensure number length is 2 or less

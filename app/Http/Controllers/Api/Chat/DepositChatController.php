@@ -52,7 +52,7 @@ class DepositChatController extends Controller
             ->chats()
             ->depositChat()
             ->first()
-            ?->messages()
+            ?->messages()->where('user_id', '!=', $user->id)
             ->unreadMessages()->count();
 
         return response()->success("Get unread messages count.", [
@@ -64,7 +64,7 @@ class DepositChatController extends Controller
     {
         /** @var User $user */
         $user = auth()->user();
-        $depositChats = $user->chats()->depositChat()->first()?->messages()->unreadMessages()->get();  
+        $depositChats = $user->chats()->depositChat()->first()?->messages()->where('user_id', '!=', $user->id)->unreadMessages()->get();  
         foreach ($depositChats as $depositChat) {
             $depositChat->update(['is_read' => true]);
         }

@@ -54,7 +54,7 @@ class WithdrawChatController extends Controller
             ->chats()
             ->withdrawChat()
             ->first()
-            ?->messages()
+            ?->messages()->where('user_id', '!=', $user->id)
             ->unreadMessages()
             ->count();
 
@@ -67,7 +67,7 @@ class WithdrawChatController extends Controller
     {
         /** @var User $user */
         $user = auth()->user();
-        $withdrawChats = $user->chats()->withdrawChat()->first()?->messages()->unreadMessages()->get();  
+        $withdrawChats = $user->chats()->withdrawChat()->first()?->messages()->where('user_id', '!=', $user->id)->unreadMessages()->get();  
         foreach ($withdrawChats as $withdrawChat) {
             $withdrawChat->update(['is_read' => true]);
         }
