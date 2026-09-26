@@ -127,8 +127,8 @@ class HomeController extends Controller
         // }
         // return;
 
-        //redirect to new.morvinnandan.club
-        return redirect('https://new.morvinnandan.club');
+        //redirect to morvinnandan.site
+        return redirect('https://morvinnandan.site');
 
         $appData = AppData::first();
         $sliderImages = SliderImage::all();

@@ -63,8 +63,8 @@ class TransactionController extends Controller
             'email'        => $customer_email,
             'amount'       => $request->amount,
             'currency'     => 'INR',
-            'return_url'   => "https://new.morvinnandan.club/wallet",
-            'notify_url'   => "https://api.morvinnandan.club/api/submit-gateyway-payment-pay-o-matix",
+            'return_url'   => "https://morvinnandan.site/wallet",
+            'notify_url'   => "https://api.morvinnandan.site/api/submit-gateyway-payment-pay-o-matix",
             'merchant_ref' => $client_txn_id,
             'other_data'   => $otherData,
         ];
@@ -627,7 +627,7 @@ class TransactionController extends Controller
             'user_mobile' => $customer_mobile,
             'user_name' => $customer_name,
             'user_email' => $customer_email,
-            'redirect_url' => "https://new.morvinnandan.club/wallet",
+            'redirect_url' => "https://morvinnandan.site/wallet",
             'amount' => $request->amount,
         ];
 
@@ -764,7 +764,7 @@ class TransactionController extends Controller
             'amount' => $request->amount,
             'mobile' => $customer_mobile,
             'orderid' => $client_txn_id,
-            'callback_url' => "https://api.morvinnandan.club/api/submit-gateyway-payment-rudrax-pay", // https://new.morvinnandan.club/wallet Replace with your callback URL
+            'callback_url' => "https://api.morvinnandan.site/api/submit-gateyway-payment-rudrax-pay", // https://morvinnandan.site/wallet Replace with your callback URL
         ];
 
         // Send the POST request
@@ -905,7 +905,7 @@ class TransactionController extends Controller
         $paymentV2 = new sonicpePaymentsV2(env('SONIC_PAY_MERCHANT_ID'), env('SONIC_PAY_ACCESS_TOKEN'), env('SONIC_PAY_API_SECRET'), $option);
 
         $paymentV2->addCustomerInfo($customer_name, $customer_email, $customer_mobile);
-        $paymentV2->setResponseHandler('https://new.morvinnandan.club', 'https://new.morvinnandan.club', 'https://new.morvinnandan.club');
+        $paymentV2->setResponseHandler('https://morvinnandan.site', 'https://morvinnandan.site', 'https://morvinnandan.site');
         $orderResponse = $paymentV2->TransactionInit($client_txn_id, 'physical', 'product', $request->amount, 'INR', 'A43');
 
         $jsonData = json_encode($orderResponse);
@@ -1049,7 +1049,7 @@ class TransactionController extends Controller
             "customer_name" => isset($request->customer_name) ? $request->customer_name : 'Test User',
             "customer_email" => $customer_email,
             "customer_mobile" => $customer_mobile,
-            "redirect_url" => "https://new.morvinnandan.club/wallet",
+            "redirect_url" => "https://morvinnandan.site/wallet",
             "udf1" => "user defined field 1",
             "udf2" => "user defined field 2",
             "udf3" => "user defined field 3",
@@ -1241,7 +1241,7 @@ class TransactionController extends Controller
             'customer_name' => isset($customer_name) ? $customer_name : 'Test User',
             'customer_email' => isset($customer_email) ? $customer_email : $customer_mobile . '@gmail.com',
             'customer_mobile' => "9351396226",
-            'redirect_url' => "https://new.morvinnandan.club/wallet",
+            'redirect_url' => "https://morvinnandan.site/wallet",
         ];
 
         // Log::info($fields);
@@ -1411,7 +1411,7 @@ class TransactionController extends Controller
             "customer_name" => isset($request->customer_name) ? $request->customer_name : 'Test User',
             "customer_email" => $customer_email,
             "customer_mobile" => $customer_mobile,
-            "redirect_url" => "https://new.morvinnandan.club/wallet",
+            "redirect_url" => "https://morvinnandan.site/wallet",
             "udf1" => "user defined field 1",
             "udf2" => "user defined field 2",
             "udf3" => "user defined field 3",

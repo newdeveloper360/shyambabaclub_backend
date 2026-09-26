@@ -13,12 +13,12 @@ class OneSignalHelper
         OneSignal::sendNotificationToUser(  // sendNotificationToAll
             $message,
             $playerId,
-            $url = 'https://new.morvinnandan.club/canceled-history'
+            $url = 'https://morvinnandan.site/canceled-history'
         );
     }
 
     // Send All Users Notification using OneSignal
-    public static function allUsersNotification($message, $url='https://new.morvinnandan.club'){
+    public static function allUsersNotification($message, $url='https://morvinnandan.site'){
         
         OneSignal::sendNotificationToAll(
             $message,

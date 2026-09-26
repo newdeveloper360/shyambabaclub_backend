@@ -24,7 +24,7 @@ class AppDataController extends Controller
         $appData['homepage_image_url'] = env('APP_URL') . $appData->homepage_image_url;
         $appData['min_transfer'] = env('MIN_TRANSFER');
         // $appData['result_history_webview_url'] = 'https://www.babajiisatta.com/result-chart.php';
-        $appData['result_history_webview_url'] = 'https://api.morvinnandan.club/charts/';
+        $appData['result_history_webview_url'] = 'https://api.morvinnandan.site/charts/';
         $appData['notification_count'] = $notification_count;
         $appData['rate_app_link'] = "https://google.com";
 

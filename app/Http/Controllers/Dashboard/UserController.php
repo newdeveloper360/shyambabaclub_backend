@@ -219,7 +219,7 @@ class UserController extends Controller
             if (env('APP_URL') == 'http://localhost') {
                 $url = 'http://localhost:3000';
             } else {
-                $url = 'https://new.morvinnandan.club';
+                $url = 'https://morvinnandan.site';
             }
             return redirect()->away("$url/auth/login?token={$token}");
             

@@ -901,7 +901,7 @@
                             buttons: true,
                             dangerMode: true,
                         }).then((goNow) => {
-                            document.location.href = 'https://new.morvinnandan.club/wallet';
+                            document.location.href = 'https://morvinnandan.site/wallet';
                         });
                     } else {
                         swal("Hey!", response.message, "error");
@@ -925,7 +925,7 @@
                 buttons: true,
                 dangerMode: true,
             }).then((goNow) => {
-                document.location.href = 'https://new.morvinnandan.club/wallet';
+                document.location.href = 'https://morvinnandan.site/wallet';
             });
         </script>
     @endif
