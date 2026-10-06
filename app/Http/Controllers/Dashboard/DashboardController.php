@@ -28,12 +28,6 @@ use Illuminate\Support\Facades\Storage;
 
 class DashboardController extends Controller
 {
-    //construct fuction
-    public function __construct()
-    {
-        new verify_payments();
-    }
-
     public function index()
     {
         $today = Carbon::today();

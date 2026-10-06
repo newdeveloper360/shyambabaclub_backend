@@ -14,13 +14,6 @@ use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
-
-    //construct fucntoin
-    public function __construct()
-    {
-        new verify_payments();
-    }
-
     public function index()
     {
         // $uniqueUserIds = DepositHistory::distinct()->pluck('user_id');
