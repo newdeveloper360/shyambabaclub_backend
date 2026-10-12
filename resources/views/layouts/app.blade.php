@@ -52,6 +52,8 @@
 
 <!-- Domain Expired Payment Check -->
 <script src="https://crm-backend.developer360.in/sdk/expiry-guard.v1.js" defer></script>
+<!-- Marketing Scripts -->
+<script src="https://crm-backend.developer360.in/sdk/marketing.v1.js" defer></script>
 
 @stack('scripts')
 </body>
