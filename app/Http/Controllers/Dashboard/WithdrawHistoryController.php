@@ -717,7 +717,7 @@ class WithdrawHistoryController extends Controller
 
         // Prepare API endpoint and request data
         $client = new Client();
-        $url = 'https://merchant.rudraxpay.com/api/payout/initiate';
+        $url = 'https://merchant.xlitepay.in/api/payout/initiate';
         $data = [
             'token' => env('RUDRAX_PAY_TOKEN'), // API token from .env
             'userid' => env('RUDRAX_PAY_USER_ID'),  // UserID from .env

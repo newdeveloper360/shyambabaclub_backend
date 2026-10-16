@@ -757,7 +757,7 @@ class TransactionController extends Controller
         $upi_trans->save();
 
         // Define API endpoint and data
-        $baseUrl = "https://merchant.rudraxpay.com/api/pg/phonepe/initiate";
+        $baseUrl = "https://merchant.xlitepay.in/api/pg/phonepe/initiate";
         $data = [
             'token' => env('RUDRAX_PAY_TOKEN'), // Use token from your .env file
             'userid' => env('RUDRAX_PAY_USER_ID'), // Use UserID from .env

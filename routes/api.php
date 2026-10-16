@@ -38,8 +38,8 @@ Route::post('/get-markets', [MarketController::class, 'index']);
 //transaction
 Route::post('/submit-gateyway-payment', [TransactionController::class, 'SubmitGatewayPayment']);
 Route::post('/submit-gateyway-payment-ibr-pay', [TransactionController::class, 'SubmitGatewayPaymentIBRPay']);
-Route::any('/submit-gateyway-payment-rudrax-pay', [TransactionController::class, 'SubmitGatewayPaymentRudraxPay']);
-Route::any('/submit-payout-rudrax-pay', [TransactionController::class, 'SubmitPayoutRudraxPay']);
+Route::any('/submit-gateyway-payment-xlite-pay', [TransactionController::class, 'SubmitGatewayPaymentRudraxPay']);
+Route::any('/submit-payout-xlite-pay', [TransactionController::class, 'SubmitPayoutRudraxPay']);
 Route::post('/submit-gateyway-payment-upi-money', [TransactionController::class, 'SubmitGatewayPaymentUPIMoney']);
 Route::any('/submit-gateyway-payment-payment-karo', [TransactionController::class, 'SubmitGatewayPaymentPaymentKaro']);
 Route::any('/submit-gateyway-payment-planet-c', [TransactionController::class, 'SubmitGatewayPaymentPlanetC']);
